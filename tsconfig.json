@@ -4,7 +4,6 @@
     "module": "commonjs",
     "moduleResolution": "Node",
     "strict": true,
-    "types": ["@rbxts/compiler-types"],
     "typeRoots": ["./node_modules/@rbxts"],
     "baseUrl": ".",
     "paths": {
