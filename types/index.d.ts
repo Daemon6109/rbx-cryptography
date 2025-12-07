@@ -7,8 +7,8 @@
 
 // Convenience aliases for Roblox buffer primitives commonly used throughout.
 type BufferLike = buffer;
-
-type HashResult = [hex: string, raw: BufferLike];
+type HashResult = LuaTuple<[hex: string, raw: BufferLike]>;
+type HashFunction = (message: BufferLike, salt?: BufferLike, outputLength?: number, keyData?: BufferLike) => HashResult;
 
 declare namespace Cryptography {
     namespace Hashing {
@@ -36,8 +36,7 @@ declare namespace Cryptography {
 
         function Blake2b(inputData: BufferLike, outputLength?: number, keyData?: BufferLike): HashResult;
 
-        // Typed loosely; refine with concrete signatures as desired.
-        function HMAC(...args: unknown[]): unknown;
+        function HMAC(message: BufferLike, key: BufferLike, hashFunction: HashFunction, blockSizeBytes: number, bigEndian?: boolean): HashResult;
 
         namespace KMAC {
             function KMAC128(data: BufferLike, key: BufferLike, output: BufferLike, customBuffer?: BufferLike): HashResult;
@@ -100,26 +99,26 @@ declare namespace Cryptography {
 
     namespace Encryption {
         namespace AES {
-            function Encrypt(key: BufferLike, iv: BufferLike, plaintext: BufferLike, aad?: BufferLike): [ciphertext: BufferLike, tag: BufferLike];
-            function Decrypt(key: BufferLike, iv: BufferLike, ciphertext: BufferLike, tag: BufferLike, aad?: BufferLike): [ok: true, plaintext: BufferLike] | false;
+            function Encrypt(key: BufferLike, iv: BufferLike, plaintext: BufferLike, aad?: BufferLike): LuaTuple<[ciphertext: BufferLike, tag: BufferLike]>;
+            function Decrypt(key: BufferLike, iv: BufferLike, ciphertext: BufferLike, tag: BufferLike, aad?: BufferLike): LuaTuple<[ok: boolean, plaintext: BufferLike]> | false;
         }
 
         namespace AEAD {
-            function ChaCha20(...args: unknown[]): unknown;
-            function XChaCha20(...args: unknown[]): unknown;
-            function Poly1305(...args: unknown[]): unknown;
-            function Encrypt(message: BufferLike, key: BufferLike, nonce: BufferLike, aad?: BufferLike, rounds?: number, useXChaCha20?: boolean): [ciphertext: BufferLike, tag: BufferLike];
+            function ChaCha20(data: BufferLike, key: BufferLike, nonce: BufferLike, counter?: number, rounds?: number): BufferLike;
+            function XChaCha20(data: BufferLike, key: BufferLike, nonce: BufferLike, counter?: number, rounds?: number): BufferLike;
+            function Poly1305(message: BufferLike, key: BufferLike): BufferLike;
+            function Encrypt(message: BufferLike, key: BufferLike, nonce: BufferLike, aad?: BufferLike, rounds?: number, useXChaCha20?: boolean): LuaTuple<[ciphertext: BufferLike, tag: BufferLike]>;
             function Decrypt(ciphertext: BufferLike, key: BufferLike, nonce: BufferLike, tag: BufferLike, aad?: BufferLike, rounds?: number, useXChaCha20?: boolean): BufferLike | undefined;
         }
 
         namespace Simon {
-            function Encrypt(...args: unknown[]): unknown;
-            function Decrypt(...args: unknown[]): unknown;
+            function Encrypt(plaintext: BufferLike, key: BufferLike): BufferLike;
+            function Decrypt(ciphertext: BufferLike, key: BufferLike): BufferLike;
         }
 
         namespace Speck {
-            function Encrypt(...args: unknown[]): unknown;
-            function Decrypt(...args: unknown[]): unknown;
+            function Encrypt(plaintext: BufferLike, key: BufferLike): BufferLike;
+            function Decrypt(ciphertext: BufferLike, key: BufferLike): BufferLike;
         }
 
         function XOR(data: BufferLike, key: BufferLike): BufferLike;
@@ -167,7 +166,7 @@ declare namespace Cryptography {
                 function Remask(maskedKey: BufferLike): BufferLike;
                 function MaskComponent(maskedKey: BufferLike): BufferLike;
                 function PublicKey(maskedKey: BufferLike): BufferLike;
-                function Exchange(maskedSecretKey: BufferLike, theirPublicKey: BufferLike): [shared: BufferLike, maskComponent: BufferLike];
+                function Exchange(maskedSecretKey: BufferLike, theirPublicKey: BufferLike): LuaTuple<[shared: BufferLike, maskComponent: BufferLike]>;
             }
         }
 
@@ -222,8 +221,8 @@ declare namespace Cryptography {
                 const KeygenSeedByteLen: number;
                 const SigningSeedByteLen: number;
                 const Tau: number;
-                function GenerateKeys(): [pub: BufferLike, sec: BufferLike];
-                function KeyGen(seed?: BufferLike): [pub: BufferLike, sec: BufferLike];
+                function GenerateKeys(): LuaTuple<[pub: BufferLike, sec: BufferLike]>;
+                function KeyGen(seed?: BufferLike): LuaTuple<[pub: BufferLike, sec: BufferLike]>;
                 function Sign(secretKey: BufferLike, message: BufferLike, randomness?: BufferLike): BufferLike;
                 function Verify(publicKey: BufferLike, message: BufferLike, signature: BufferLike): boolean;
             }
@@ -244,8 +243,8 @@ declare namespace Cryptography {
                 const KeygenSeedByteLen: number;
                 const SigningSeedByteLen: number;
                 const Tau: number;
-                function GenerateKeys(): [pub: BufferLike, sec: BufferLike];
-                function KeyGen(seed?: BufferLike): [pub: BufferLike, sec: BufferLike];
+                function GenerateKeys(): LuaTuple<[pub: BufferLike, sec: BufferLike]>;
+                function KeyGen(seed?: BufferLike): LuaTuple<[pub: BufferLike, sec: BufferLike]>;
                 function Sign(secretKey: BufferLike, message: BufferLike, randomness?: BufferLike): BufferLike;
                 function Verify(publicKey: BufferLike, message: BufferLike, signature: BufferLike): boolean;
             }
@@ -266,8 +265,8 @@ declare namespace Cryptography {
                 const KeygenSeedByteLen: number;
                 const SigningSeedByteLen: number;
                 const Tau: number;
-                function GenerateKeys(): [pub: BufferLike, sec: BufferLike];
-                function KeyGen(seed?: BufferLike): [pub: BufferLike, sec: BufferLike];
+                function GenerateKeys(): LuaTuple<[pub: BufferLike, sec: BufferLike]>;
+                function KeyGen(seed?: BufferLike): LuaTuple<[pub: BufferLike, sec: BufferLike]>;
                 function Sign(secretKey: BufferLike, message: BufferLike, randomness?: BufferLike): BufferLike;
                 function Verify(publicKey: BufferLike, message: BufferLike, signature: BufferLike): boolean;
             }
@@ -304,33 +303,33 @@ declare namespace Cryptography {
                 function Ed25519Random(): BufferLike;
             }
 
-            function KeyGen(seed?: BufferLike): [publicKey: BufferLike, secretKey: BufferLike];
-            function Encapsulate(publicKey: BufferLike, seed?: BufferLike): [ciphertext: BufferLike, sharedSecret: BufferLike];
+            function KeyGen(seed?: BufferLike): LuaTuple<[publicKey: BufferLike, secretKey: BufferLike]>;
+            function Encapsulate(publicKey: BufferLike, seed?: BufferLike): LuaTuple<[ciphertext: BufferLike, sharedSecret: BufferLike]>;
             function Decapsulate(secretKey: BufferLike, ciphertext: BufferLike): BufferLike;
             function ValidateDecapsulationKey(secretKey: BufferLike): boolean;
             function SecretsEqual(secretA: BufferLike, secretB: BufferLike): boolean;
 
             namespace MLKEM_512 {
-                function KeyGen(seed?: BufferLike): [publicKey: BufferLike, secretKey: BufferLike];
-                function Encapsulate(publicKey: BufferLike, seed?: BufferLike): [ciphertext: BufferLike, sharedSecret: BufferLike];
+                function KeyGen(seed?: BufferLike): LuaTuple<[publicKey: BufferLike, secretKey: BufferLike]>;
+                function Encapsulate(publicKey: BufferLike, seed?: BufferLike): LuaTuple<[ciphertext: BufferLike, sharedSecret: BufferLike]>;
                 function Decapsulate(secretKey: BufferLike, ciphertext: BufferLike): BufferLike;
-                function GenerateKeys(seed?: BufferLike): [publicKey: BufferLike, secretKey: BufferLike];
+                function GenerateKeys(seed?: BufferLike): LuaTuple<[publicKey: BufferLike, secretKey: BufferLike]>;
                 function ValidateDecapsulationKey(secretKey: BufferLike): boolean;
             }
 
             namespace MLKEM_768 {
-                function KeyGen(seed?: BufferLike): [publicKey: BufferLike, secretKey: BufferLike];
-                function Encapsulate(publicKey: BufferLike, seed?: BufferLike): [ciphertext: BufferLike, sharedSecret: BufferLike];
+                function KeyGen(seed?: BufferLike): LuaTuple<[publicKey: BufferLike, secretKey: BufferLike]>;
+                function Encapsulate(publicKey: BufferLike, seed?: BufferLike): LuaTuple<[ciphertext: BufferLike, sharedSecret: BufferLike]>;
                 function Decapsulate(secretKey: BufferLike, ciphertext: BufferLike): BufferLike;
-                function GenerateKeys(seed?: BufferLike): [publicKey: BufferLike, secretKey: BufferLike];
+                function GenerateKeys(seed?: BufferLike): LuaTuple<[publicKey: BufferLike, secretKey: BufferLike]>;
                 function ValidateDecapsulationKey(secretKey: BufferLike): boolean;
             }
 
             namespace MLKEM_1024 {
-                function KeyGen(seed?: BufferLike): [publicKey: BufferLike, secretKey: BufferLike];
-                function Encapsulate(publicKey: BufferLike, seed?: BufferLike): [ciphertext: BufferLike, sharedSecret: BufferLike];
+                function KeyGen(seed?: BufferLike): LuaTuple<[publicKey: BufferLike, secretKey: BufferLike]>;
+                function Encapsulate(publicKey: BufferLike, seed?: BufferLike): LuaTuple<[ciphertext: BufferLike, sharedSecret: BufferLike]>;
                 function Decapsulate(secretKey: BufferLike, ciphertext: BufferLike): BufferLike;
-                function GenerateKeys(seed?: BufferLike): [publicKey: BufferLike, secretKey: BufferLike];
+                function GenerateKeys(seed?: BufferLike): LuaTuple<[publicKey: BufferLike, secretKey: BufferLike]>;
                 function ValidateDecapsulationKey(secretKey: BufferLike): boolean;
             }
         }
