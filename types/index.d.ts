@@ -48,7 +48,7 @@ declare namespace Cryptography {
     }
 
     namespace Checksums {
-        function CRC32(buffer: BufferLike, mode?: "Jam" | "Iso", pad?: boolean): number;
+        function CRC32(buffer: BufferLike, mode?: "Jam" | "Iso", hex?: boolean): number | string;
         function Adler(buffer: BufferLike): number;
     }
 
@@ -59,31 +59,56 @@ declare namespace Cryptography {
         }
 
         namespace Base64 {
-            function Encode(buffer: BufferLike): string;
+            function Encode(buffer: BufferLike): BufferLike;
             function Decode(input: string | BufferLike): BufferLike;
         }
 
-        namespace RandomString {
-            function Generate(length: number): string;
-        }
+        const RandomString: (length: number, asBuffer?: boolean) => string | BufferLike;
 
         namespace CSPRNG {
+            let BlockExpansion: boolean;
+            let SizeTarget: number;
+            let RekeyAfter: number;
+
+            let Key: BufferLike;
+            let Nonce: BufferLike;
+            let Buffer: BufferLike;
+
+            let Counter: number;
+            let BufferPosition: number;
+            let BufferSize: number;
+            let BytesLeft: number;
+
+            function Reseed(customEntropy?: BufferLike): void;
+            function AddEntropyProvider(provider: (bytesLeft: number) => BufferLike | undefined): void;
+            function RemoveEntropyProvider(provider: (bytesLeft: number) => BufferLike | undefined): void;
+
+            function Random(): number;
+            function RandomInt(min: number, max?: number): number;
+            function RandomNumber(min: number, max?: number): number;
+            function RandomBytes(count: number): BufferLike;
+            function RandomString(length: number, asBuffer?: boolean): string | BufferLike;
+            function RandomHex(length: number): string;
+            function Ed25519ClampedBytes(input: BufferLike): BufferLike;
+            function Ed25519Random(): BufferLike;
             const Blake3: (...args: unknown[]) => unknown;
             const ChaCha20: (...args: unknown[]) => unknown;
             const Conversions: typeof Conversions;
-            function RandomBytes(length: number): BufferLike;
         }
     }
 
     namespace Encryption {
         namespace AES {
             function Encrypt(key: BufferLike, iv: BufferLike, plaintext: BufferLike, aad?: BufferLike): [ciphertext: BufferLike, tag: BufferLike];
-            function Decrypt(key: BufferLike, iv: BufferLike, ciphertext: BufferLike, tag: BufferLike, aad?: BufferLike): [ok: true, plaintext: BufferLike] | [ok: false];
+            function Decrypt(key: BufferLike, iv: BufferLike, ciphertext: BufferLike, tag: BufferLike, aad?: BufferLike): [ok: true, plaintext: BufferLike] | false;
         }
 
         namespace AEAD {
-            const ChaCha: (...args: unknown[]) => unknown;
+            const ChaCha20: (...args: unknown[]) => unknown;
+            const XChaCha20: (...args: unknown[]) => unknown;
             const Poly1305: (...args: unknown[]) => unknown;
+            function Encrypt(message: BufferLike, key: BufferLike, nonce: BufferLike, aad?: BufferLike, rounds?: number, useXChaCha20?: boolean): [ciphertext: BufferLike, tag: BufferLike];
+            function Decrypt(ciphertext: BufferLike, key: BufferLike, nonce: BufferLike, tag: BufferLike, aad?: BufferLike, rounds?: number, useXChaCha20?: boolean): BufferLike | undefined;
         }
 
         namespace Simon {
@@ -96,15 +121,11 @@ declare namespace Cryptography {
             const Decrypt: (...args: unknown[]) => unknown;
         }
 
-        namespace XOR {
-            function Encrypt(data: BufferLike, key: BufferLike): BufferLike;
-            function Decrypt(data: BufferLike, key: BufferLike): BufferLike;
-        }
+        const XOR: (data: BufferLike, key: BufferLike) => BufferLike;
     }
 
     namespace Verification {
         namespace EdDSA {
-            // X25519 and Ed25519 typed loosely; refine as needed.
             namespace X25519 {
                 function GenerateKeyPair(): [publicKey: BufferLike, privateKey: BufferLike];
                 function Derive(publicKey: BufferLike, privateKey: BufferLike): BufferLike;
