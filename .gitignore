@@ -9,6 +9,7 @@ lune_packages/
 .pesde/
 DevPackages/
 Packages/
+node_modules/
 
 sourcemap.json
 wally.lock
