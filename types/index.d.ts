@@ -100,7 +100,7 @@ declare namespace Cryptography {
     namespace Encryption {
         namespace AES {
             function Encrypt(key: BufferLike, iv: BufferLike, plaintext: BufferLike, aad?: BufferLike): LuaTuple<[ciphertext: BufferLike, tag: BufferLike]>;
-            function Decrypt(key: BufferLike, iv: BufferLike, ciphertext: BufferLike, tag: BufferLike, aad?: BufferLike): LuaTuple<[ok: boolean, plaintext: BufferLike]> | false;
+            function Decrypt(key: BufferLike, iv: BufferLike, ciphertext: BufferLike, tag: BufferLike, aad?: BufferLike): LuaTuple<[ok: boolean, plaintext?: BufferLike]>;
         }
 
         namespace AEAD {
