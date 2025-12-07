@@ -1,20 +1,29 @@
 {
   "compilerOptions": {
+    // Environment setup & latest features
+    "lib": ["ESNext"],
     "target": "ESNext",
-    "module": "commonjs",
-    "moduleResolution": "Node",
-    "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "typeRoots": ["./node_modules/@rbxts"],
-    "types": ["@rbxts/compiler-types"],
-    "paths": {
-      "@rbxts/cryptography": ["types/index"],
-      "@rbxts/cryptography/*": ["types/*"]
-    },
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "allowJs": true,
+
+    // Bundler mode
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
     "noEmit": true,
-    "skipLibCheck": false
-  },
-  "include": ["types/**/*.d.ts"],
-  "exclude": ["node_modules"]
+
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    // Some stricter flags (disabled by default)
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@rbxts/cryptography",
+  "name": "rbx-cryptography",
   "version": "0.0.0-dev",
   "description": "Luau cryptography primitives packaged for roblox-ts with typed declarations.",
   "license": "MIT",
@@ -13,6 +13,7 @@
   "homepage": "https://github.com/Daemon6109/rbx-cryptography#readme",
   "main": "src/init.luau",
   "types": "types/index.d.ts",
+  "type": "module",
   "files": [
     "src",
     "types",
@@ -35,7 +36,11 @@
   "devDependencies": {
     "@rbxts/compiler-types": "^3.0.0-types.0",
     "@rbxts/types": "^1.0.896",
-    "typescript": "=5.5.3"
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5",
+    "roblox-ts": "^3"
   },
   "publishConfig": {
     "access": "public"
